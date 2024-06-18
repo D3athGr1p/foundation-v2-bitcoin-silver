@@ -3,7 +3,7 @@ const utils = require('./utils');
 ////////////////////////////////////////////////////////////////////////////////
 
 // Main Transactions Function
-const Transactions = function(config, rpcData) {
+const Transactions = function (config, rpcData) {
 
   const _this = this;
   this.config = config;
@@ -38,7 +38,7 @@ const Transactions = function(config, rpcData) {
   };
 
   // Calculate Generation Transaction
-  this.handleGeneration = function(placeholder) {
+  this.handleGeneration = function (placeholder) {
 
     const txLockTime = 0;
     const txInSequence = 0;
@@ -93,6 +93,31 @@ const Transactions = function(config, rpcData) {
       utils.varIntBuffer(scriptSig.length + placeholder.length),
       scriptSig,
     ]);
+
+    if (_this.rpcData.CommunityAutonomousAddress) {
+      var payeeReward = 0;
+      payeeReward = _this.rpcData.CommunityAutonomousValue;
+      
+      var payeeScript = utils.addressToScript(_this.rpcData.CommunityAutonomousAddress, network);
+      txOutputBuffers.push(Buffer.concat([
+        utils.packUInt64LE(payeeReward),
+        utils.varIntBuffer(payeeScript.length),
+        payeeScript
+      ]));
+    }
+
+    // ExchangeAddress
+    if (_this.rpcData.ExchangeAddress) {
+      var payeeReward = 0;
+      payeeReward = _this.rpcData.ExchnageFundValue;
+
+      var payeeScript = utils.addressToScript(_this.rpcData.ExchangeAddress, network);
+      txOutputBuffers.push(Buffer.concat([
+        utils.packUInt64LE(payeeReward),
+        utils.varIntBuffer(payeeScript.length),
+        payeeScript
+      ]));
+    }
 
     // Handle Recipient Transactions
     let recipientTotal = 0;
